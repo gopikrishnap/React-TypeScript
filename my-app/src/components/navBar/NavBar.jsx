@@ -1,9 +1,9 @@
 // src/components/Navbar.tsx
-import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import AuthHoc from '../AuthHoc';
 
-const Navbar: React.FC = () => {
+const Navbar =() => {
   return (
     <AppBar position="static">
       <Toolbar>
@@ -29,5 +29,5 @@ const Navbar: React.FC = () => {
     </AppBar>
   );
 };
-
-export default Navbar;
+const AuthNavBar =  AuthHoc(Navbar);
+export default AuthNavBar;

@@ -1,31 +1,40 @@
 // src/components/Login.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, TextField, Typography, Paper } from '@mui/material';
+import { GetUseContexData } from './StoreContex';
+import { useNavigate } from "react-router-dom";
+import { showToast } from './utils';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleLogin = async(e: any) => {
+    const { handleDispatch } = GetUseContexData();
+    const navigate = useNavigate();
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // console.log('Email:', email);
-        // console.log('Password:', password);
-        const request ={email,password}
-        try{
-         const response = await  fetch('https://reqres.in/api/login',{
-            method:"POST",
-            headers:{
-                "content-type":"application/json",
-                "x-api-key":"reqres-free-v1"
-            },
-            body: JSON.stringify(request)
-         })
-         const result= await response.json();
-            
-        }catch(error){
-            console.log(error)
-        }
+        const request = { email, password }
+        try {
+            const response = await fetch('https://reqres.in/api/login', {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                    "x-api-key": "reqres-free-v1"
+                },
+                body: JSON.stringify(request)
+            })
+            const result = await response.json();
+            if (result?.token) {
+                handleDispatch({ type: "SET_AUTH", payLoad: result?.token || '' });
+                showToast("Login Successfully done", 'success');
+                navigate('/home')
+            } else {
+                showToast(result?.error, 'error');
+            }
 
+        } catch (error) {
+            handleDispatch({ type: "SET_AUTH", payLoad: '' });
+            throw new Error(error);
+        }
     };
 
     return (
